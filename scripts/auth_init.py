@@ -39,7 +39,8 @@ def create_application(credential):
         },
         timeout=urllib3.Timeout(connect=10, read=10),
     )
-    print(resp)
+    print("Received response from graph.microsoft.com")
+    print(resp.json())
     app_id = resp.json()["id"]
     client_id = resp.json()["appId"]
 
