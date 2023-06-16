@@ -9,6 +9,9 @@ param environmentName string
 @description('Primary location for all resources')
 param location string
 
+@description('Flag to decide where to create OpenAI role for current user')
+param createRoleForUser bool = true
+
 param appServicePlanName string = ''
 param backendServiceName string = ''
 param resourceGroupName string = ''
@@ -185,7 +188,7 @@ module searchService 'core/search/search-services.bicep' = {
 
 
 // USER ROLES
-module openAiRoleUser 'core/security/role.bicep' = {
+module openAiRoleUser 'core/security/role.bicep' = if (createRoleForUser) {
   scope: openAiResourceGroup
   name: 'openai-role-user'
   params: {
@@ -195,7 +198,7 @@ module openAiRoleUser 'core/security/role.bicep' = {
   }
 }
 
-module searchRoleUser 'core/security/role.bicep' = {
+module searchRoleUser 'core/security/role.bicep' = if (createRoleForUser) {
   scope: searchServiceResourceGroup
   name: 'search-role-user'
   params: {
@@ -205,7 +208,7 @@ module searchRoleUser 'core/security/role.bicep' = {
   }
 }
 
-module searchIndexDataContribRoleUser 'core/security/role.bicep' = {
+module searchIndexDataContribRoleUser 'core/security/role.bicep' = if (createRoleForUser) {
   scope: searchServiceResourceGroup
   name: 'search-index-data-contrib-role-user'
   params: {
@@ -215,7 +218,7 @@ module searchIndexDataContribRoleUser 'core/security/role.bicep' = {
   }
 }
 
-module searchServiceContribRoleUser 'core/security/role.bicep' = {
+module searchServiceContribRoleUser 'core/security/role.bicep' = if (createRoleForUser) {
   scope: searchServiceResourceGroup
   name: 'search-service-contrib-role-user'
   params: {
