@@ -39,11 +39,12 @@ def create_application(credential):
         },
         timeout=urllib3.Timeout(connect=10, read=10),
     )
-    print("Received response from graph.microsoft.com")
-    print(resp.json())
+
+    if "error" in resp.json():
+        raise Exception(resp.json()["error"]["message"])
+
     app_id = resp.json()["id"]
     client_id = resp.json()["appId"]
-
     return app_id, client_id
 
 
@@ -83,13 +84,17 @@ if __name__ == "__main__":
             print("Application already exists, not creating new one.")
             exit(0)
 
-    print("Creating application registration")
-    app_id, client_id = create_application(credential)
+    try:
+        print("Creating application registration")
+        app_id, client_id = create_application(credential)
 
-    print(f"Adding client secret to {app_id}")
-    client_secret = add_client_secret(credential, app_id)
+        print(f"Adding client secret to {app_id}")
+        client_secret = add_client_secret(credential, app_id)
 
-    print("Updating azd env with AUTH_APP_ID, AUTH_CLIENT_ID, AUTH_CLIENT_SECRET")
-    update_azd_env("AUTH_APP_ID", app_id)
-    update_azd_env("AUTH_CLIENT_ID", client_id)
-    update_azd_env("AUTH_CLIENT_SECRET", client_secret)
+        print("Updating azd env with AUTH_APP_ID, AUTH_CLIENT_ID, AUTH_CLIENT_SECRET")
+        update_azd_env("AUTH_APP_ID", app_id)
+        update_azd_env("AUTH_CLIENT_ID", client_id)
+        update_azd_env("AUTH_CLIENT_SECRET", client_secret)
+    except Exception as e:
+        print("Unable to create application: ", e)
+        exit(1)
