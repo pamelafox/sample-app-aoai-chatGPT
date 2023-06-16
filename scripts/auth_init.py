@@ -39,7 +39,7 @@ def create_application(credential):
         },
         timeout=urllib3.Timeout(connect=10, read=10),
     )
-
+    print(resp)
     app_id = resp.json()["id"]
     client_id = resp.json()["appId"]
 
